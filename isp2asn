@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+#
+# Map ISP to ASN.
+#
+# 20190130  Kimmo Suominen
+#
+
+set -e
+set -u
+
+declare -A asn=(
+    ["aina"]="20569"
+    ["dna"]="16086"
+    ["elisa"]="719"
+    ["funet"]="1741"
+    ["globalwire"]="8145"
+    ["imageworld"]="29132"
+    ["nebula"]="29422"
+    ["netplaza"]="20904"
+    ["noisystream"]="51311"
+    ["planeetta"]="58003"
+    ["suomicom"]="16302"
+    ["telia"]="1759"
+    ["tieto"]="375"
+)
+
+case "${1}" in
+LIST)
+    echo "${!asn[@]}" \
+    | tr '[:space:]' '\n' \
+    | sort
+    ;;
+SUMMARY)
+    count="$("${0}" LIST | wc -l)"
+    echo "${count} ${0##*/}"
+    ;;
+*)
+    echo "${asn[${1}]}"
+    ;;
+esac
