@@ -1,0 +1,3 @@
+[submodule "obj"]
+	path = obj
+	url = https://github.com/suominen/fi-routes-data.git
