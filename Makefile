@@ -6,7 +6,7 @@
 .PHONY: default
 default: all
 
-COUNTRY_LIST	=  fi
+COUNTRY_LIST	=  fi cn
 ISP_LIST	!= "${.CURDIR}/isp2asn" LIST
 
 DESTDIR		=  /etc/firewall/routes
