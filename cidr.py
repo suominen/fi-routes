@@ -22,4 +22,4 @@ nets = IPSet(data)
 
 # Output the superset of CIDR blocks
 for cidr in nets.iter_cidrs():
-    print cidr
+    print(cidr)
