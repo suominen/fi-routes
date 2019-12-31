@@ -14,14 +14,9 @@ declare -A asn=(
     ["elisa"]="719"
     ["funet"]="1741"
     ["globalwire"]="8145"
-    ["imageworld"]="29132"
-    ["nebula"]="29422"
-    ["netplaza"]="20904"
     ["noisystream"]="51311"
-    ["planeetta"]="58003"
     ["suomicom"]="16302"
     ["telia"]="1759"
-    ["tieto"]="375"
 )
 
 case "${1}" in
