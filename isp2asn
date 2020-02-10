@@ -14,6 +14,7 @@ declare -A asn=(
     ["elisa"]="719"
     ["funet"]="1741"
     ["globalwire"]="8145"
+    ["nebula"]="29422"
     ["noisystream"]="51311"
     ["suomicom"]="16302"
     ["telia"]="1759"
