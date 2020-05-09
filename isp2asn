@@ -9,7 +9,6 @@ set -e
 set -u
 
 declare -A asn=(
-    ["aina"]="20569"
     ["dna"]="16086"
     ["elisa"]="719"
     ["funet"]="1741"
