@@ -8,8 +8,11 @@ default: all
 
 COUNTRY_LIST	=  fi cn
 ISP_LIST	!= "${.CURDIR}/isp2asn" LIST
+GCP_REGIONS	=  us-east1 europe-north1
 
-DESTDIR		=  /etc/firewall/routes
+DESTDIR		=  /etc/firewall
+ROUTES_DIR	=  routes
+NETWORKS_DIR	=  networks
 
 .SUFFIXES: -asn -inet -inet6 .country.json .routes.json
 
@@ -59,26 +62,29 @@ routes-${i}.routes.json:
 	    | tr -d '[:space:]' \
 	)" > "${.TARGET}"
 
-install: ${DESTDIR}/routes-${i}-inet
+install: ${DESTDIR}/${ROUTES}/routes-${i}-inet
 
-${DESTDIR}/routes-${i}-inet: routes-${i}-inet
+${DESTDIR}/${ROUTES}/routes-${i}-inet: routes-${i}-inet
 	install -m 0640 ${.ALLSRC} ${DESTDIR}
 
-install: ${DESTDIR}/routes-${i}-inet6
+install: ${DESTDIR}/${ROUTES}/routes-${i}-inet6
 
-${DESTDIR}/routes-${i}-inet6: routes-${i}-inet6
+${DESTDIR}/${ROUTES}/routes-${i}-inet6: routes-${i}-inet6
 	install -m 0640 ${.ALLSRC} ${DESTDIR}
 .endfor
 
-summary: routes-summary
+summary: network-routes-summary
 
-.PHONY: routes-summary
-routes-summary:
-	@for type in inet inet6 ; \
+.PHONY: network-routes-summary
+network-routes-summary:
+	@for type in network routes ; \
 	do \
-	    echo ; \
-	    wc -l routes-*-"$${type}" \
-	    | sort -nr ; \
+	    for family in inet inet6 ; \
+	    do \
+		echo ; \
+		wc -l "$${type}"-*-"$${family}" \
+		| sort -nr ; \
+	    done ; \
 	done
 
 .country.json-asn:
@@ -124,12 +130,46 @@ routes-summary:
 	| "${.CURDIR}/cidr.py" \
 	> "${.TARGET}"
 
+# Obtain Google IP address ranges
+# https://support.google.com/a/answer/10026322
+
+google-cloud.json:
+	curl -LSs https://www.gstatic.com/ipranges/cloud.json > "${.TARGET}"
+
+.for i in ${GCP_REGIONS}
+all: network-gcp-${i}-inet
+
+network-gcp-${i}-inet: google-cloud.json
+	jq -r --arg region "${i}" '.prefixes[] | select(.scope == $$region) \
+	    | select(.ipv4Prefix != null) | .ipv4Prefix' "${.ALLSRC}" \
+	> "${.TARGET}"
+
+all: network-gcp-${i}-inet6
+
+network-gcp-${i}-inet6: google-cloud.json
+	jq -r --arg region "${i}" '.prefixes[] | select(.scope == $$region) \
+	    | select(.ipv6Prefix != null) | .ipv6Prefix' "${.ALLSRC}" \
+	> "${.TARGET}"
+
+install: ${DESTDIR}/${NETWORKS}/network-gcp-${i}-inet
+
+${DESTDIR}/${NETWORKS}/network-gcp-${i}-inet: network-gcp-${i}-inet
+	install -m 0640 ${.ALLSRC} ${DESTDIR}
+
+install: ${DESTDIR}/${NETWORKS}/network-gcp-${i}-inet6
+
+${DESTDIR}/${NETWORKS}/network-gcp-${i}-inet6: network-gcp-${i}-inet6
+	install -m 0640 ${.ALLSRC} ${DESTDIR}
+.endfor
+
 .PHONY: clean
 clean:
 	rm -f \
 	    country-*-asn \
 	    country-*-inet \
 	    country-*-inet6 \
+	    network-gcp-*-inet \
+	    network-gcp-*-inet6 \
 	    routes-*-inet \
 	    routes-*-inet6 \
 
@@ -137,6 +177,7 @@ clean:
 cleanjson:
 	rm -f \
 	    country-*.country.json \
+	    google-cloud.json \
 	    routes-*.routes.json \
 
 .PHONY: refresh
