@@ -11,8 +11,8 @@ ISP_LIST	!= "${.CURDIR}/isp2asn" LIST
 GCP_REGIONS	=  us-east1 europe-north1
 
 DESTDIR		=  /etc/firewall
-ROUTES_DIR	=  routes
-NETWORKS_DIR	=  networks
+ROUTES		=  routes
+NETWORKS	=  networks
 
 .SUFFIXES: -asn -inet -inet6 .country.json .routes.json
 
@@ -65,12 +65,12 @@ routes-${i}.routes.json:
 install: ${DESTDIR}/${ROUTES}/routes-${i}-inet
 
 ${DESTDIR}/${ROUTES}/routes-${i}-inet: routes-${i}-inet
-	install -m 0640 ${.ALLSRC} ${DESTDIR}
+	install -m 0640 ${.ALLSRC} ${.TARGET}
 
 install: ${DESTDIR}/${ROUTES}/routes-${i}-inet6
 
 ${DESTDIR}/${ROUTES}/routes-${i}-inet6: routes-${i}-inet6
-	install -m 0640 ${.ALLSRC} ${DESTDIR}
+	install -m 0640 ${.ALLSRC} ${.TARGET}
 .endfor
 
 summary: network-routes-summary
@@ -154,12 +154,12 @@ network-gcp-${i}-inet6: google-cloud.json
 install: ${DESTDIR}/${NETWORKS}/network-gcp-${i}-inet
 
 ${DESTDIR}/${NETWORKS}/network-gcp-${i}-inet: network-gcp-${i}-inet
-	install -m 0640 ${.ALLSRC} ${DESTDIR}
+	install -m 0640 ${.ALLSRC} ${.TARGET}
 
 install: ${DESTDIR}/${NETWORKS}/network-gcp-${i}-inet6
 
 ${DESTDIR}/${NETWORKS}/network-gcp-${i}-inet6: network-gcp-${i}-inet6
-	install -m 0640 ${.ALLSRC} ${DESTDIR}
+	install -m 0640 ${.ALLSRC} ${.TARGET}
 .endfor
 
 .PHONY: clean
