@@ -9,6 +9,7 @@ set -e
 set -u
 
 asn='
+    blc=51935
     dna=16086
     elisa=719
     funet=1741
