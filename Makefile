@@ -6,7 +6,7 @@
 .PHONY: default
 default: all
 
-COUNTRY_LIST	=  fi cn
+COUNTRY_LIST	=  fi cn ru
 ISP_LIST	!= "${.CURDIR}/isp2asn" LIST
 GCP_REGIONS	=  us-east1 europe-north1
 
