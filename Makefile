@@ -151,15 +151,15 @@ network-gcp-${i}-inet6: google-cloud.json
 	    | select(.ipv6Prefix != null) | .ipv6Prefix' "${.ALLSRC}" \
 	> "${.TARGET}"
 
-install: ${DESTDIR}/${NETWORKS}/network-gcp-${i}-inet
+#install: ${DESTDIR}/${NETWORKS}/network-gcp-${i}-inet
 
-${DESTDIR}/${NETWORKS}/network-gcp-${i}-inet: network-gcp-${i}-inet
-	install -m 0640 ${.ALLSRC} ${.TARGET}
+#${DESTDIR}/${NETWORKS}/network-gcp-${i}-inet: network-gcp-${i}-inet
+#	install -m 0640 ${.ALLSRC} ${.TARGET}
 
-install: ${DESTDIR}/${NETWORKS}/network-gcp-${i}-inet6
+#install: ${DESTDIR}/${NETWORKS}/network-gcp-${i}-inet6
 
-${DESTDIR}/${NETWORKS}/network-gcp-${i}-inet6: network-gcp-${i}-inet6
-	install -m 0640 ${.ALLSRC} ${.TARGET}
+#${DESTDIR}/${NETWORKS}/network-gcp-${i}-inet6: network-gcp-${i}-inet6
+#	install -m 0640 ${.ALLSRC} ${.TARGET}
 .endfor
 
 .PHONY: clean
