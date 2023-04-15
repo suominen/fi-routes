@@ -133,6 +133,9 @@ network-routes-summary:
 # Obtain Google IP address ranges
 # https://support.google.com/a/answer/10026322
 
+#google-all.json:
+#	curl -LSs https://www.gstatic.com/ipranges/goog.json > "${.TARGET}"
+
 google-cloud.json:
 	curl -LSs https://www.gstatic.com/ipranges/cloud.json > "${.TARGET}"
 
