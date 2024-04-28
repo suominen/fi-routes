@@ -1,0 +1,81 @@
+#!/bin/sh
+#
+# Load nft sets
+#
+# 20240420  Kimmo Suominen
+#
+
+#
+# Copyright (c) 2024 Kimmo Suominen
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer
+#    in the documentation and/or other materials provided with the
+#    distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+
+set -eu
+
+PATH=/usr/bin:/bin:/usr/sbin:/sbin
+export PATH
+
+PROG="${0##*/}"
+DIR=/etc/nftables
+
+type=routes
+#type=country
+
+trim()
+{
+    sed -e '
+	s/[[:space:]]*#.*$//
+	/^[[:space:]]*$/ d
+	s/^[[:space:]]*//
+	s/[[:space:]]*$//
+    ' "${@}"
+}
+
+for v in 4 6
+do
+    case "${v}" in
+    4) family=ipv4; ext=inet;;
+    6) family=ipv6; ext=inet6;;
+    *) echo internal error with ip version 1>&2; exit 1;;
+    esac
+
+    for file in "${DIR}/${type}"-*-"${ext}"
+    do
+	[ -r "${file}" ] || continue
+
+	#block="$(trim "${file}" | paste -sd,)"
+	#[ "${block}" ] || continue
+	#nft add element inet firewall "admin/${family}" "{ ${block} }"
+
+	trim "${file}" |
+	while read block
+	do
+	    nft add element inet firewall "admin/${family}" "{ ${block} }" ||
+	    true
+	done
+    done
+done
