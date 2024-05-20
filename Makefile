@@ -10,7 +10,7 @@ COUNTRY_LIST	=  fi cn ru
 ISP_LIST	!= "${.CURDIR}/isp2asn" LIST
 GCP_REGIONS	=  us-east1 europe-north1
 
-DESTDIR		=  /etc/firewall
+DESTDIR		=  ${HOME}/src/cloud/ansible/files
 ROUTES		=  routes
 NETWORKS	=  networks
 
